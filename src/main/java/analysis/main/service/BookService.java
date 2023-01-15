@@ -30,9 +30,26 @@ public class BookService implements Runnable {
         Thread thread1 = new Thread() {
             @Override
             public void run() {
+                Map<String, Integer> map = new HashMap<>();
+                for (String temp : list) {
+                    String[] array = temp.split("[ .,:?!-]");
+                    for (String arrayTemp : array) {
+                        if (map.containsKey(arrayTemp) && arrayTemp.length() > 3)
+                            map.merge(arrayTemp, 1, Integer::sum);
+                        else
+                            map.putIfAbsent(arrayTemp, 1); //добавляет в мапу, если значения нет
+                    }
 
+                }
+
+                Map.Entry<String, Integer> maxEntry = map.entrySet().stream()
+                        .max(Map.Entry.comparingByValue())
+                        .orElse(null);
+                System.out.println(maxEntry);
+                //map.forEach((k, v) -> System.out.print(k + v + " "));
             }
         };
+        thread1.start();
     }
 
     public void getResult(List<String> list) {
